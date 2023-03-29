@@ -1,5 +1,5 @@
 const express = require('express');
-const { default: mongoose } = require('mongoose');
+const mongoose  = require('mongoose');
 const { Category } = require('../models/category.model');
 const router = express.Router();
 const { Product } = require('../models/product.model')
@@ -13,7 +13,7 @@ router.get(`/`, async (req, res) => {
         filter = {category: req.categories.split(',')}
     }
 
-    const productList = await Product.find({category: filter}).populate('category');
+    const productList = await Product.find().populate('category');
 
     if (!productList) {
         res.status(500).json({ success: false })
@@ -22,7 +22,7 @@ router.get(`/`, async (req, res) => {
 })
 
 router.get(`/:id`, async (req, res) => {
-    const product = await Product.findById(req.params.id).populate('category');
+    const product = await Product.findById(req.params.id)
 
     if (!product) {
         res.status(500).json({ success: false })
@@ -120,4 +120,4 @@ router.get('/get/featured/:count', async (req, res)=>{
     res.send(products)
 })
 
-module.exports = router;
+module.exports = router; 
