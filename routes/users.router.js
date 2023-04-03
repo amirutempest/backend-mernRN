@@ -79,7 +79,7 @@ router.post('/login', async (req, res) => {
     const secret = process.env.secret;
 
     if(!user){
-        return res.status(400).send('Pengguna tidak ada!')
+        return res.status(404).send('Pengguna tidak ada!')
     }
 
     if(user && bcrypt.compareSync(req.body.password, user.passwordHash)){
@@ -98,7 +98,7 @@ router.post('/login', async (req, res) => {
         res.status(400).send('kata sandi salah!');
     }
 
-    return res.status(200).send(user);
+    // return res.status(200).send('user');
 
 })
 
@@ -120,6 +120,29 @@ router.post('/register', async (req, res)=> {
     return res.status(400).send('Pengguna tidak dapat mendaftar!');
 
     res.send(user);
+})
+
+router.delete('/:id', (req, res) => {
+    User.findByIdAndRemove(req.params.id).then(user => {
+        if(user) {
+            return res.status(200).json({success: true, message: 'user berhasil dihapus!'})
+        } else {
+            return res.status(404).json({success: true, message: 'user tidak ada!'})
+        }
+    }).catch(err=> {
+        return res.status(400).json({success: false, error: err})
+    })
+})
+
+router.get('/get/count', async (req, res)=>{
+    const userCount = await User.countDocuments();
+
+    if(!userCount) {
+        res.status(500).json({success: false})
+    }
+    res.send({
+        userCount: userCount
+    })
 })
 
 module.exports = router;
